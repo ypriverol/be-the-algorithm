@@ -43,9 +43,9 @@ function showWelcome() {
     board.style.display = willHide ? 'none' : '';
     $('#boardToggle').textContent = willHide ? '🏆 Show board' : '🏆 Hide board';
     setHideBoard(willHide);
-    if (!willHide) renderBoard(10);
+    if (!willHide) renderBoard();
   };
-  if (!hidden) renderBoard(10);
+  if (!hidden) renderBoard();
 }
 
 let cardIdx = 0;
@@ -197,18 +197,30 @@ function showResults() {
     try { await navigator.clipboard.writeText(txt); $('#msg').textContent = 'Copied!'; }
     catch { $('#msg').textContent = txt; }
   };
-  renderBoard(10);
+  renderBoard();
 }
 
-async function renderBoard(top = 10) {
+// A fun animal per rank (cycles for lower ranks); rank 1 = 🦁.
+const RANK_ANIMALS = ['🦁','🐯','🐆','🐺','🦊','🐻','🐼','🦄','🦉','🦅','🐙','🐢','🐬','🦡','🦝','🐨','🐸','🐝','🐿️','🦔'];
+const BOARD_PAGE = 10;
+let boardData = null, boardPage = 0;
+
+async function renderBoard() {
   const el = $('#board');
   if (!el) return;
   el.innerHTML = '<p class="muted">Loading class board…</p>';
-  const data = await fetchLeaderboard(50);                  // one fetch → banner + board
+  const data = await fetchLeaderboard(100);                 // fetch all (backend caps at 100)
   if (data === null) { el.innerHTML = ''; return; }         // board not configured → hide
-  const { list, count } = data;
+  boardData = data; boardPage = 0;
+  paintBoard();
+}
+
+function paintBoard() {
+  const el = $('#board');
+  if (!el || !boardData) return;
+  const { list, count } = boardData;
   if (!list.length) { el.innerHTML = '<p class="muted">Class board is empty — you could be first!</p>'; return; }
-  // activity banner (derived from timestamps — "recently active", zero backend change)
+  // activity banner (from the full list)
   const now = Date.now();
   const timed = list.map(r => ({ ...r, t: Date.parse(r.time) })).filter(r => !Number.isNaN(r.t));
   const lastHour = timed.filter(r => now - r.t < 3600000).length;
@@ -216,17 +228,29 @@ async function renderBoard(top = 10) {
   const banner = `<div class="live-banner">🎮 <b>${count}</b> games played`
     + `${lastHour ? ` · <b>${lastHour}</b> in the last hour` : ''}`
     + `${latest ? ` · latest: ${latest}` : ''}</div>`;
-  // top-N board (list is already score-sorted)
-  let mine = false;
-  const rows = list.slice(0, top).map((r, i) => {
-    const you = !mine && r.name === state.name && r.score === state.score;
-    if (you) mine = true;
-    return `<tr class="${you ? 'you' : ''}"><td>${i + 1}</td><td>${esc(r.name)}</td>
-      <td>${r.score}</td><td>${esc(r.tier || '')}</td></tr>`;
+  // paginate (list is already score-sorted; rank = global index)
+  const pages = Math.max(1, Math.ceil(list.length / BOARD_PAGE));
+  boardPage = Math.min(Math.max(0, boardPage), pages - 1);
+  const start = boardPage * BOARD_PAGE;
+  const rows = list.slice(start, start + BOARD_PAGE).map((r, k) => {
+    const rank = start + k;                                 // 0-based global rank
+    const you = r.name === state.name && r.score === state.score;
+    const animal = RANK_ANIMALS[rank % RANK_ANIMALS.length];
+    return `<tr class="${you ? 'you' : ''}"><td class="rk">${animal}</td><td>${rank + 1}</td>`
+      + `<td>${esc(r.name)}</td><td>${r.score}</td><td>${esc(r.tier || '')}</td></tr>`;
   }).join('');
+  const pager = pages > 1 ? `<div class="pager">
+      <button id="bPrev" class="btn-ghost small" ${boardPage === 0 ? 'disabled' : ''}>‹ Prev</button>
+      <span>Page ${boardPage + 1} / ${pages}</span>
+      <button id="bNext" class="btn-ghost small" ${boardPage >= pages - 1 ? 'disabled' : ''}>Next ›</button>
+    </div>` : '';
   el.innerHTML = banner
-    + `<h2 class="board-h">Class board — top scores</h2>`
-    + `<table class="board"><tr><th>#</th><th>Name</th><th>Score</th><th>Tier</th></tr>${rows}</table>`;
+    + `<h2 class="board-h">Class board — ${list.length} player${list.length !== 1 ? 's' : ''}</h2>`
+    + `<table class="board"><tr><th></th><th>#</th><th>Name</th><th>Score</th><th>Tier</th></tr>${rows}</table>`
+    + pager;
+  const prev = $('#bPrev'), next = $('#bNext');
+  if (prev) prev.onclick = () => { boardPage -= 1; paintBoard(); };
+  if (next) next.onclick = () => { boardPage += 1; paintBoard(); };
 }
 
 function esc(s) {
