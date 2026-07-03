@@ -30,7 +30,7 @@ played, and you can open, sort, or delete rows anytime.
 ## The Apps Script
 
 ```javascript
-// Be the Algorithm — leaderboard backend
+// QuantQuest — leaderboard backend
 const SHEET_NAME = 'scores';
 
 function sheet_() {

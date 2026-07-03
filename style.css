@@ -64,3 +64,4 @@ details{width:100%;max-width:520px;text-align:left}
 .kv em{font-style:normal;font-weight:700;color:var(--teal-d);font-variant-numeric:tabular-nums}
 .mbr-slot.filled{background:#e7f6ec;border-style:solid}
 .mbr-dot.used{opacity:.4;cursor:default}
+.feature-map{max-width:560px;margin:8px auto}

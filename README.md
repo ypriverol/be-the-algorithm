@@ -1,4 +1,4 @@
-# Be the Algorithm
+# QuantQuest
 
 Interactive quiz + game for computational proteomics quantification. Static, no build.
 
@@ -13,7 +13,7 @@ node --test
 ```
 
 ## Deploy
-Push to `main` on `ypriverol/be-the-algorithm` and enable GitHub Pages (root). Static — no Action needed.
+Push to `main` on `ypriverol/quantquest` and enable GitHub Pages (root). Static — no Action needed.
 
 ## How to extend
 - **Add a question/card:** edit `content.js` (`mcqPool` / `trainingCards`). Run `node --test` — the validator checks it.

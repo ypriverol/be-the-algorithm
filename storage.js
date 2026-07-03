@@ -13,7 +13,8 @@ export const setBest = (n) => { if (n > getBest()) LS()?.setItem(K_BEST, n); };
 // preflight with Apps Script — we don't need to read the response).
 export function submitScore({ name, score, tier, badge }) {
   setBest(score);
-  if (LEADERBOARD_URL) {
+  // Only post to the shared board from a real browser session (keeps Node/tests offline).
+  if (LEADERBOARD_URL && typeof window !== 'undefined') {
     try {
       fetch(LEADERBOARD_URL, {
         method: 'POST',

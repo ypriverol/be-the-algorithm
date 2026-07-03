@@ -21,17 +21,19 @@ function showWelcome() {
   const best = getBest();
   mount(`
     <div class="card center">
-      <h1>Be the Algorithm</h1>
+      <h1>QuantQuest</h1>
       <p>Learn how software turns mass-spec signal into a quantitative matrix — then play.</p>
       <input id="name" class="name" placeholder="Your name" value="${state.name || ''}" maxlength="24" />
       ${best ? `<p class="muted">Your best: ${best}</p>` : ''}
       <button id="start" class="btn-primary">Start training ➔</button>
+      <div id="board"></div>
     </div>`);
   $('#start').onclick = () => {
     const v = $('#name').value.trim();
     if (!v) { $('#name').focus(); return; }
     state.name = v; setName(v); go('training');
   };
+  renderBoard(10);
 }
 
 let cardIdx = 0;
@@ -179,18 +181,18 @@ function showResults() {
   submitScore({ name:state.name, score:state.score, tier:tier.name, badge });
   $('#again').onclick = () => go('play');
   $('#share').onclick = async () => {
-    const txt = `I scored ${state.score} (${tier.name}, ${badge}) on Be the Algorithm!`;
+    const txt = `I scored ${state.score} (${tier.name}, ${badge}) on QuantQuest!`;
     try { await navigator.clipboard.writeText(txt); $('#msg').textContent = 'Copied!'; }
     catch { $('#msg').textContent = txt; }
   };
-  renderBoard();
+  renderBoard(10);
 }
 
-async function renderBoard() {
+async function renderBoard(top = 10) {
   const el = $('#board');
   if (!el) return;
   el.innerHTML = '<p class="muted">Loading class board…</p>';
-  const list = await fetchLeaderboard(20);
+  const list = await fetchLeaderboard(top);
   if (list === null) { el.innerHTML = ''; return; }        // board not configured → hide
   if (!list.length) { el.innerHTML = '<p class="muted">Class board is empty — you could be first!</p>'; return; }
   let mine = false;
