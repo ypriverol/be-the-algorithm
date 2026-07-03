@@ -1,6 +1,7 @@
 import { trainingCards, TOPICS, mcqPool } from './content.js';
 import { getName, setName, getBest, submitScore } from './storage.js';
 import { computeDelta, blankPerTopic, recordTopic, tierFor, badgeFor } from './score.js';
+import { games, gameIds } from './games/registry.js';
 
 const app = document.getElementById('app');
 const mount = (html) => { app.innerHTML = html; };
@@ -55,8 +56,16 @@ function showTraining() {
 }
 
 function buildRounds() {
-  const mcq = shuffle(mcqPool).slice(0, 10).map((m) => ({ type:'mcq', ...m }));
-  return mcq; // Task 15 interleaves game rounds here
+  const mcq = shuffle(mcqPool).slice(0, 8).map((m) => ({ type:'mcq', ...m }));
+  const gameRounds = shuffle(gameIds).map((id) => ({ type:'game', gameId:id,
+    topic: ({envelope:'feature',feature:'feature',method:'methods',detective:'missing',mbr:'mbr'})[id] }));
+  // interleave: game, then ~2 mcq, repeat
+  const rounds = []; let gi = 0, mi = 0;
+  while (gi < gameRounds.length || mi < mcq.length) {
+    if (gi < gameRounds.length) rounds.push(gameRounds[gi++]);
+    for (let k=0;k<2 && mi<mcq.length;k++) rounds.push(mcq[mi++]);
+  }
+  return rounds;
 }
 
 function startPlay() {
@@ -77,7 +86,10 @@ function hud() {
 function runRound() {
   const r = state.rounds[state.roundIndex];
   if (r.type === 'mcq') return renderMcq(r);
-  // r.type === 'game' handled in Task 15
+  // game round
+  mount(`${hud()}<div id="gameHost"></div>`);
+  const host = $('#gameHost');
+  games[r.gameId].render(host, { onDone: (result) => finishRound(result, 0) });
 }
 
 function renderMcq(r) {
