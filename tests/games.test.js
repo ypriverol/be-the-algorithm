@@ -71,3 +71,29 @@ test('method: each schematic renders and carries its distinguishing cue', () => 
   assert.match(schematic('SILAC'), /pair in MS1/);
   assert.match(schematic('DIA'), /wide windows/);
 });
+
+import { ionSeries, observedMz, matchIons, makePuzzle } from '../games/spectrum.js';
+test('spectrum: b/y ion masses are correct for a known peptide', () => {
+  const { b, y } = ionSeries('SAGE');   // S,A,G,E
+  assert.equal(b.length, 3); assert.equal(y.length, 3);
+  // b1 = S + proton = 87.03203 + 1.007276
+  assert.ok(Math.abs(b[0].mz - 88.039) < 0.01, `b1 was ${b[0].mz}`);
+  // y1 = E + water + proton = 129.04259 + 18.010565 + 1.007276
+  assert.ok(Math.abs(y[0].mz - 148.060) < 0.01, `y1 was ${y[0].mz}`);
+});
+test('spectrum: the true peptide explains all peaks; a different one explains fewer', () => {
+  const target = 'SAGE';
+  const obs = observedMz(target);
+  const t = matchIons(obs, target);
+  assert.equal(t.matched, t.total);               // target matches every peak
+  const d = matchIons(obs, 'WRDL');               // a very different peptide
+  assert.ok(d.matched < d.total, `decoy matched ${d.matched}/${d.total}`);
+});
+test('spectrum: makePuzzle yields a distinct, harder-to-confuse decoy', () => {
+  const p = makePuzzle(5);
+  assert.notEqual(p.target, p.decoy);
+  assert.equal(p.observed.length >= 1, true);
+  const dm = matchIons(p.observed, p.decoy).matched;
+  const tm = matchIons(p.observed, p.target).matched;
+  assert.ok(tm > dm, `target ${tm} should beat decoy ${dm}`);
+});

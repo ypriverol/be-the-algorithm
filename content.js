@@ -7,6 +7,7 @@ export const TOPICS = {
   'normalization':{ label:'Normalization',   review:'Removes technical shifts in log2; assumes most proteins do not change.' },
   'rollup':       { label:'Protein roll-up', review:'Many peptides → one protein value; shared peptides → protein groups.' },
   'missing':      { label:'Missing values',  review:'MNAR (low) vs MCAR (random); constant-low imputation fakes on/off hits.' },
+  'identification':{ label:'Peptide ID (MS2)', review:'A peptide is identified when its b/y fragment ions explain the MS2 spectrum.' },
 };
 
 export const trainingCards = [
@@ -41,6 +42,8 @@ export const mcqPool = [
   { id:'q16', topic:'normalization', q:'We work in log2 mainly because…', choices:['It looks nicer','Intensities span orders of magnitude; ratios become differences','It removes IDs','It adds charge'], answer:1, explain:'Log2 compresses dynamic range and turns fold-changes into differences.' },
   { id:'q17', topic:'acquisition', q:'DIA typically quantifies on…', choices:['MS1 only','Fragment ions','Reporter ions','The FASTA'], answer:1, explain:'Wide windows co-isolate precursors, so fragments give specificity.' },
   { id:'q18', topic:'mbr', q:'The upside of match-between-runs is…', choices:['Fewer missing values','No FDR needed','Faster gradients','More charge'], answer:0, explain:'MBR fills gaps across runs — but needs its own error control.' },
+  { id:'q19', topic:'identification', q:'A peptide is identified when…', choices:['its precursor mass alone matches','its b/y fragment ions explain the MS2 spectrum','it elutes first','it carries charge 2+'], answer:1, trap:0, explain:'Sequence is confirmed by matching the b/y fragment ladder in MS2, not mass alone.' },
+  { id:'q20', topic:'identification', q:'b and y ions are…', choices:['random noise','fragments from breaking the peptide backbone','reporter ions','carbon isotopes'], answer:1, explain:'Fragmenting the backbone yields N-terminal (b) and C-terminal (y) ions.' },
 ];
 
 export function validateContent() {

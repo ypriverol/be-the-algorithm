@@ -41,6 +41,12 @@ details{width:100%;max-width:520px;text-align:left}
 .matrix td.na{color:var(--red);font-weight:700}
 
 .method-fig{max-width:360px;margin:8px auto}
+.spectrum{margin:8px 0}
+.choices.two{grid-template-columns:1fr 1fr}
+.cand{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:20px;letter-spacing:2px;text-align:center;font-weight:700}
+.strikes{display:inline-flex;gap:5px;vertical-align:middle;margin-left:4px}
+.sdot{width:11px;height:11px;border-radius:50%;background:#cdd7da;display:inline-block}
+.sdot.miss{background:var(--red)}
 .mbr{display:flex;gap:16px;margin:14px 0;align-items:flex-start}
 .lane{flex:1;display:flex;flex-direction:column;gap:10px;align-items:center}
 .lane-h{font-weight:700;color:var(--teal-d);font-size:13px}
