@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { envelopeData, checkEnvelope } from '../games/envelope.js';
+import { envelopeData, checkEnvelope, explainEnvelope } from '../games/envelope.js';
 import { featureData, checkFeature } from '../games/feature.js';
 import { methodData, checkMethod, schematic } from '../games/method.js';
 import { detectiveData, checkDetective } from '../games/detective.js';
@@ -96,4 +96,18 @@ test('spectrum: makePuzzle yields a distinct, harder-to-confuse decoy', () => {
   const dm = matchIons(p.observed, p.decoy).matched;
   const tm = matchIons(p.observed, p.target).matched;
   assert.ok(tm > dm, `target ${tm} should beat decoy ${dm}`);
+});
+
+test('envelope: wrong answer produces a specific teaching explanation', () => {
+  const d = envelopeData();
+  const correct = explainEnvelope(0, 2, d);
+  assert.match(correct, /Correct/);
+  // wrong peak (picked M+1) explains monoisotopic + M+ index
+  const wrongPeak = explainEnvelope(1, 2, d);
+  assert.match(wrongPeak, /LEFT-most/);
+  assert.match(wrongPeak, /M\+1/);
+  // wrong charge explains spacing = 1/z
+  const wrongCharge = explainEnvelope(0, 1, d);
+  assert.match(wrongCharge, /1\/z/);
+  assert.match(wrongCharge, /not 1\+/);
 });
