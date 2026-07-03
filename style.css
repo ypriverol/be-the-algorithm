@@ -12,3 +12,11 @@ button{font:inherit;cursor:pointer;border:none;border-radius:var(--radius);paddi
 .btn-ghost{background:#fff;color:var(--teal-d);border:2px solid var(--teal)}
 .card{background:#fff;border-radius:var(--radius);padding:20px;box-shadow:0 2px 8px rgba(10,61,82,.08)}
 .center{display:flex;flex-direction:column;align-items:center;gap:var(--gap);text-align:center}
+
+.name{font-size:18px;padding:12px;border:2px solid var(--teal);border-radius:10px;width:min(320px,90%)}
+.muted{color:#7a8890}.link{color:var(--orange);cursor:pointer;text-decoration:underline}
+.hud{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-weight:700;color:var(--teal-d)}
+.chip{background:var(--teal-l);color:var(--teal-d);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:700}
+.flip{cursor:pointer;min-height:180px;justify-content:center}
+.dots{display:flex;gap:8px;justify-content:center;margin:14px 0}
+.dot{width:10px;height:10px;border-radius:50%;background:#c7d3d6}.dot.on{background:var(--orange)}
