@@ -4,6 +4,7 @@ import { envelopeData, checkEnvelope } from '../games/envelope.js';
 import { featureData, checkFeature } from '../games/feature.js';
 import { methodData, checkMethod } from '../games/method.js';
 import { detectiveData, checkDetective } from '../games/detective.js';
+import { mbrData, evaluateMbr } from '../games/mbr.js';
 
 test('envelope: monoisotopic is index 0 and charge from spacing', () => {
   const d = envelopeData();
@@ -31,4 +32,13 @@ test('detective: trust the measured hit, artifact penalised', () => {
   const d = detectiveData();
   assert.equal(checkDetective(d.trustworthyName, d).correct, true);
   assert.equal(checkDetective(d.artifactName, d).penalty, true);
+});
+
+test('mbr: correct pairing, decoy must stay unmatched', () => {
+  const d = mbrData();
+  const good = {}; d.run2.forEach(r => { good[r.id] = r.match; }); // includes decoy -> null
+  assert.equal(evaluateMbr(good, d).correct, true);
+  const bad = { ...good, [d.decoyId]: d.run1[1].id };
+  assert.equal(evaluateMbr(bad, d).penalty, true);
+  assert.equal(evaluateMbr(bad, d).correct, false);
 });

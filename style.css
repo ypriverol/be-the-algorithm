@@ -39,3 +39,10 @@ details{width:100%;max-width:520px;text-align:left}
 .matrix{border-collapse:collapse;margin:12px 0;width:100%}
 .matrix th,.matrix td{border:1px solid #cfd8dc;padding:6px 10px;text-align:center;font-size:14px}
 .matrix td.na{color:var(--red);font-weight:700}
+
+.mbr{display:flex;gap:20px;justify-content:space-between;margin:12px 0;flex-wrap:wrap}
+.lane{flex:1;min-width:180px}
+.slot,.dot{display:inline-block;min-width:64px;text-align:center;margin:6px;padding:8px;border-radius:10px;border:2px dashed var(--teal)}
+.dot{cursor:grab;background:var(--teal-l);border-style:solid}
+.slot.filled{background:#e7f6ec;border-style:solid}
+.dot.used{opacity:.4}
