@@ -40,9 +40,14 @@ details{width:100%;max-width:520px;text-align:left}
 .matrix th,.matrix td{border:1px solid #cfd8dc;padding:6px 10px;text-align:center;font-size:14px}
 .matrix td.na{color:var(--red);font-weight:700}
 
-.mbr{display:flex;gap:20px;justify-content:space-between;margin:12px 0;flex-wrap:wrap}
-.lane{flex:1;min-width:180px}
-.slot,.dot{display:inline-block;min-width:64px;text-align:center;margin:6px;padding:8px;border-radius:10px;border:2px dashed var(--teal)}
-.dot{cursor:grab;background:var(--teal-l);border-style:solid}
-.slot.filled{background:#e7f6ec;border-style:solid}
-.dot.used{opacity:.4}
+.method-fig{max-width:360px;margin:8px auto}
+.mbr{display:flex;gap:16px;margin:14px 0;align-items:flex-start}
+.lane{flex:1;display:flex;flex-direction:column;gap:10px;align-items:center}
+.lane-h{font-weight:700;color:var(--teal-d);font-size:13px}
+.mbr-slot,.mbr-dot{width:118px;padding:8px 12px;border-radius:10px;border:2px dashed var(--teal);background:#fff}
+.mbr-slot b,.mbr-dot b{display:block;text-align:center;margin-bottom:4px;color:var(--teal-d)}
+.mbr-dot{cursor:grab;background:var(--teal-l);border-style:solid}
+.kv{display:flex;justify-content:space-between;font-size:13px;line-height:1.5}
+.kv em{font-style:normal;font-weight:700;color:var(--teal-d);font-variant-numeric:tabular-nums}
+.mbr-slot.filled{background:#e7f6ec;border-style:solid}
+.mbr-dot.used{opacity:.4;cursor:default}

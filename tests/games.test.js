@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { envelopeData, checkEnvelope } from '../games/envelope.js';
 import { featureData, checkFeature } from '../games/feature.js';
-import { methodData, checkMethod } from '../games/method.js';
+import { methodData, checkMethod, schematic } from '../games/method.js';
 import { detectiveData, checkDetective } from '../games/detective.js';
 import { mbrData, evaluateMbr } from '../games/mbr.js';
 
@@ -58,4 +58,16 @@ test('mbr: the trap is REJECTED BY RT, not by m/z', () => {
   const decoyDrift = decoy.rt - p2.rt;      // ~3.5
   assert.ok(Math.abs(trueDrift) <= 1.5, 'true match RT drift should be ~1 min');
   assert.ok(decoyDrift - trueDrift > 1.5, 'decoy RT should be clearly inconsistent with the drift');
+});
+
+test('method: each schematic renders and carries its distinguishing cue', () => {
+  for (const m of ['TMT','LFQ','SILAC','DIA']) {
+    const svg = schematic(m);
+    assert.match(svg, /^<svg /);
+    assert.match(svg, /<\/svg>$/);
+  }
+  assert.match(schematic('TMT'), /reporter ions/);
+  assert.match(schematic('LFQ'), /MS1 precursor/);
+  assert.match(schematic('SILAC'), /pair in MS1/);
+  assert.match(schematic('DIA'), /wide windows/);
 });

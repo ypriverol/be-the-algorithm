@@ -29,32 +29,33 @@ export function evaluateMbr(assignments, data = mbrData()) {
 export function render(container, { onDone }) {
   const d = mbrData();
   const assignments = {}; // run2Id -> run1Id | null
+  const kv = (mz, rt) => `<span class="kv">m/z<em>${mz}</em></span><span class="kv">RT<em>${rt.toFixed(1)}</em></span>`;
   container.innerHTML = `
     <div class="card">
       <span class="chip">Match between runs</span>
-      <h2>Run 2's retention time drifted ~+1 min. Drag each Run-2 dot onto the Run-1 peptide with the same m/z AND a consistent RT.</h2>
+      <h2>Match each Run 2 signal to Run 1</h2>
+      <p class="muted">Run 2's RT drifted ~+1 min. Two Run 2 dots share m/z 742.9 — only RT tells them apart. Drag each dot to its match; leave the wrong-RT impostor unmatched.</p>
       <div class="mbr">
-        <div class="lane" id="run1"><b>Run 1</b>
-          ${d.run1.map(p=>`<span class="slot" data-p="${p.id}">${p.id}<br><small>m/z ${p.mz}<br>RT ${p.rt.toFixed(1)}</small></span>`).join('')}
+        <div class="lane"><span class="lane-h">Run 1 — targets</span>
+          ${d.run1.map(p=>`<span class="mbr-slot" data-p="${p.id}"><b>${p.id}</b>${kv(p.mz,p.rt)}</span>`).join('')}
         </div>
-        <div class="lane" id="run2"><b>Run 2 (drag these)</b>
-          ${d.run2.map(r=>`<span class="dot" draggable="true" data-r="${r.id}">?<br><small>m/z ${r.mz}<br>RT ${r.rt.toFixed(1)}</small></span>`).join('')}
+        <div class="lane"><span class="lane-h">Run 2 — drag these</span>
+          ${d.run2.map(r=>`<span class="mbr-dot" draggable="true" data-r="${r.id}"><b>?</b>${kv(r.mz,r.rt)}</span>`).join('')}
         </div>
       </div>
-      <p class="muted">Two Run-2 dots share m/z 742.9 — only their RT tells them apart. Leave the impostor (wrong RT) unmatched.</p>
       <button id="mbrDone" class="btn-primary">Submit matches</button>
     </div>`;
   let dragged = null;
-  container.querySelectorAll('.dot').forEach(dot => {
+  container.querySelectorAll('.mbr-dot').forEach(dot => {
     dot.addEventListener('dragstart', () => { dragged = dot.dataset.r; });
   });
-  container.querySelectorAll('.slot').forEach(slot => {
+  container.querySelectorAll('.mbr-slot').forEach(slot => {
     slot.addEventListener('dragover', (e) => e.preventDefault());
     slot.addEventListener('drop', () => {
       if (!dragged) return;
       assignments[dragged] = slot.dataset.p;
       slot.classList.add('filled'); slot.dataset.got = dragged;
-      const dot = container.querySelector(`.dot[data-r="${dragged}"]`);
+      const dot = container.querySelector(`.mbr-dot[data-r="${dragged}"]`);
       if (dot) dot.classList.add('used');
       dragged = null;
     });
