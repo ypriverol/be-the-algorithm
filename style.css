@@ -20,3 +20,10 @@ button{font:inherit;cursor:pointer;border:none;border-radius:var(--radius);paddi
 .flip{cursor:pointer;min-height:180px;justify-content:center}
 .dots{display:flex;gap:8px;justify-content:center;margin:14px 0}
 .dot{width:10px;height:10px;border-radius:50%;background:#c7d3d6}.dot.on{background:var(--orange)}
+
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.choice{background:#fff;border:2px solid var(--teal);color:var(--teal-d);text-align:left}
+.choice.good{background:#e7f6ec;border-color:#2e7d32}.choice.bad{background:#fbe9e7;border-color:var(--red)}
+.feedback{margin-top:14px;padding:14px;border-radius:12px;display:flex;flex-direction:column;gap:8px}
+.feedback.ok{background:#e7f6ec}.feedback.no{background:#fbe9e7}
+@media(max-width:520px){.choices{grid-template-columns:1fr}}
