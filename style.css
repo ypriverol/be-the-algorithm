@@ -35,3 +35,7 @@ button{font:inherit;cursor:pointer;border:none;border-radius:var(--radius);paddi
 .track{background:#e3e9ea;border-radius:999px;height:12px;overflow:hidden}
 .fill{display:block;height:100%;background:var(--teal)}
 details{width:100%;max-width:520px;text-align:left}
+
+.matrix{border-collapse:collapse;margin:12px 0;width:100%}
+.matrix th,.matrix td{border:1px solid #cfd8dc;padding:6px 10px;text-align:center;font-size:14px}
+.matrix td.na{color:var(--red);font-weight:700}

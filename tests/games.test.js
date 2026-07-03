@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { envelopeData, checkEnvelope } from '../games/envelope.js';
 import { featureData, checkFeature } from '../games/feature.js';
 import { methodData, checkMethod } from '../games/method.js';
+import { detectiveData, checkDetective } from '../games/detective.js';
 
 test('envelope: monoisotopic is index 0 and charge from spacing', () => {
   const d = envelopeData();
@@ -24,4 +25,10 @@ test('method: correct choice matches answer', () => {
   assert.ok(d.choices.includes(d.answer));
   assert.equal(checkMethod(d.answer, d).correct, true);
   assert.equal(checkMethod(d.choices.find(c=>c!==d.answer), d).correct, false);
+});
+
+test('detective: trust the measured hit, artifact penalised', () => {
+  const d = detectiveData();
+  assert.equal(checkDetective(d.trustworthyName, d).correct, true);
+  assert.equal(checkDetective(d.artifactName, d).penalty, true);
 });
