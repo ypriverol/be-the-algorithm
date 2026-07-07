@@ -216,6 +216,9 @@ function showResults() {
 // A fun animal per rank (cycles for lower ranks); rank 1 = 🦁.
 const RANK_ANIMALS = ['🦁','🐯','🐆','🐺','🦊','🐻','🐼','🦄','🦉','🦅','🐙','🐢','🐬','🦡','🦝','🐨','🐸','🐝','🐿️','🦔'];
 const BOARD_PAGE = 10;
+const nameKey = (n) => (n || '').trim().toLowerCase();
+// test/seed entries hidden from the board (data stays in the sheet; add names here to hide)
+const BOARD_BLOCKLIST = new Set(['ada', 'any', 'setup-test-2', 'anon']);
 let boardData = null, boardPage = 0;
 
 async function renderBoard() {
@@ -231,9 +234,10 @@ async function renderBoard() {
 function paintBoard() {
   const el = $('#board');
   if (!el || !boardData) return;
-  const { list, count } = boardData;
+  const { count } = boardData;
+  const list = boardData.list.filter(r => !BOARD_BLOCKLIST.has(nameKey(r.name)));  // drop test/seed rows
   if (!list.length) { el.innerHTML = '<p class="muted">Class board is empty — you could be first!</p>'; return; }
-  // activity banner (from the full list)
+  // activity banner (from the visible list)
   const now = Date.now();
   const timed = list.map(r => ({ ...r, t: Date.parse(r.time) })).filter(r => !Number.isNaN(r.t));
   const lastHour = timed.filter(r => now - r.t < 3600000).length;
@@ -242,7 +246,6 @@ function paintBoard() {
     + `${lastHour ? ` · <b>${lastHour}</b> in the last hour` : ''}`
     + `${latest ? ` · latest: ${latest}` : ''}</div>`;
   // one row per player: keep each name's BEST score, then rank
-  const nameKey = (n) => (n || '').trim().toLowerCase();
   const best = new Map();
   for (const r of list) {
     const k = nameKey(r.name);
