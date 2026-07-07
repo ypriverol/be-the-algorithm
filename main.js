@@ -241,13 +241,23 @@ function paintBoard() {
   const banner = `<div class="live-banner">🎮 <b>${count}</b> games played`
     + `${lastHour ? ` · <b>${lastHour}</b> in the last hour` : ''}`
     + `${latest ? ` · latest: ${latest}` : ''}</div>`;
-  // paginate (list is already score-sorted; rank = global index)
-  const pages = Math.max(1, Math.ceil(list.length / BOARD_PAGE));
+  // one row per player: keep each name's BEST score, then rank
+  const nameKey = (n) => (n || '').trim().toLowerCase();
+  const best = new Map();
+  for (const r of list) {
+    const k = nameKey(r.name);
+    const cur = best.get(k);
+    if (!cur || Number(r.score) > Number(cur.score)) best.set(k, r);
+  }
+  const players = [...best.values()].sort((a, b) => Number(b.score) - Number(a.score));
+  const meKey = nameKey(state.name);
+  // paginate the deduped players; rank = global index
+  const pages = Math.max(1, Math.ceil(players.length / BOARD_PAGE));
   boardPage = Math.min(Math.max(0, boardPage), pages - 1);
   const start = boardPage * BOARD_PAGE;
-  const rows = list.slice(start, start + BOARD_PAGE).map((r, k) => {
+  const rows = players.slice(start, start + BOARD_PAGE).map((r, k) => {
     const rank = start + k;                                 // 0-based global rank
-    const you = r.name === state.name && r.score === state.score;
+    const you = nameKey(r.name) === meKey;
     const animal = RANK_ANIMALS[rank % RANK_ANIMALS.length];
     return `<tr class="${you ? 'you' : ''}"><td class="rk">${animal}</td><td>${rank + 1}</td>`
       + `<td>${esc(r.name)}</td><td>${r.score}</td><td>${esc(r.tier || '')}</td></tr>`;
@@ -258,7 +268,7 @@ function paintBoard() {
       <button id="bNext" class="btn-ghost small" ${boardPage >= pages - 1 ? 'disabled' : ''}>Next ›</button>
     </div>` : '';
   el.innerHTML = banner
-    + `<h2 class="board-h">Class board — ${list.length} player${list.length !== 1 ? 's' : ''}</h2>`
+    + `<h2 class="board-h">Class board — ${players.length} player${players.length !== 1 ? 's' : ''} (best score each)</h2>`
     + `<table class="board"><tr><th></th><th>#</th><th>Name</th><th>Score</th><th>Tier</th></tr>${rows}</table>`
     + pager;
   const prev = $('#bPrev'), next = $('#bNext');
